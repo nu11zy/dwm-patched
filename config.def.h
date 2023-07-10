@@ -20,8 +20,8 @@ static int tagindicatortype              = INDICATOR_TOP_LEFT_SQUARE;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_TOP_LEFT_SQUARE;
 static const int quit_empty_window_count = 0;   /* only allow dwm to quit if no (<= count) windows are open */
-static const char *fonts[]               = { "monospace:size=10" };
-static const char dmenufont[]            = "monospace:size=10";
+static const char *fonts[]               = { "JetBrainsMono Nerd Font:size=10" };
+static const char dmenufont[]            = "JetBrainsMono Nerd Font:size=10";
 
 static char c000000[]                    = "#000000"; // placeholder value
 
@@ -149,8 +149,6 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "UTILITY", .isfloating = 1)
 	RULE(.wintype = WTYPE "TOOLBAR", .isfloating = 1)
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
-	RULE(.class = "Gimp", .tags = 1 << 4)
-	RULE(.class = "Firefox", .tags = 1 << 7)
 	RULE(.class = "Alacritty", .isfloating = 0, .isterminal = 1)
 };
 
@@ -193,7 +191,7 @@ static const Layout layouts[] = {
 
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
