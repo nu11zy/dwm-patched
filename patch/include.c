@@ -13,10 +13,11 @@
 /* Other patches */
 #include "attachx.c"
 #include "autostart.c"
+#include "focusfollowmouse.c"
 #include "pertag.c"
 #include "sizehints_ruled.c"
 #include "swallow.c"
-#include "warp.c"
+#include "zoomswap.c"
 /* Layouts */
 #include "layout_facts.c"
 #include "layout_monocle.c"

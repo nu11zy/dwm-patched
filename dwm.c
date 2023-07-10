@@ -314,7 +314,6 @@ static void maprequest(XEvent *e);
 static void motionnotify(XEvent *e);
 static void movemouse(const Arg *arg);
 static Client *nexttiled(Client *c);
-static void pop(Client *c);
 static void propertynotify(XEvent *e);
 static void quit(const Arg *arg);
 static Monitor *recttomon(int x, int y, int w, int h);
@@ -378,8 +377,6 @@ static int lrpad;            /* sum of left and right padding for text */
  * when moving (or resizing) client windows from one monitor to another. This variable is used
  * internally to ignore such configure requests while movemouse or resizemouse are being used. */
 static int ignoreconfigurerequests = 0;
-static int force_warp = 0; // force warp in some situations, e.g. killclient
-static int ignore_warp = 0; // force skip warp in some situations, e.g. dragmfact, dragcfact
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -880,6 +877,7 @@ createmon(void)
 		m->pertag->mfacts[i] = m->mfact;
 
 
+		m->pertag->prevzooms[i] = NULL;
 
 		/* init layouts */
 		m->pertag->ltidxs[i][0] = m->lt[0];
@@ -1117,6 +1115,8 @@ void
 focus(Client *c)
 {
 	if (!c || !ISVISIBLE(c))
+		c = getpointerclient();
+	if (!c || !ISVISIBLE(c))
 		for (c = selmon->stack; c && !ISVISIBLE(c); c = c->snext);
 	if (selmon->sel && selmon->sel != c)
 		unfocus(selmon->sel, 0, c);
@@ -1166,7 +1166,6 @@ focusmon(const Arg *arg)
 	unfocus(selmon->sel, 0, NULL);
 	selmon = m;
 	focus(NULL);
-	warp(selmon->sel);
 }
 
 void
@@ -1366,7 +1365,6 @@ killclient(const Arg *arg)
 		XSync(dpy, False);
 		XSetErrorHandler(xerror);
 		XUngrabServer(dpy);
-		force_warp = 1;
 	}
 }
 
@@ -1581,14 +1579,6 @@ nexttiled(Client *c)
 	return c;
 }
 
-void
-pop(Client *c)
-{
-	detach(c);
-	attach(c);
-	focus(c);
-	arrange(c->mon);
-}
 
 void
 propertynotify(XEvent *e)
@@ -1793,11 +1783,6 @@ restack(Monitor *m)
 	}
 	XSync(dpy, False);
 	while (XCheckMaskEvent(dpy, EnterWindowMask, &ev));
-	if (m == selmon && (m->tagset[m->seltags] & m->sel->tags) && (
-		m->lt[m->sellt]->arrange != &monocle
-		|| m->sel->isfloating)
-	)
-		warp(m->sel);
 }
 
 void
@@ -2242,6 +2227,15 @@ unmanage(Client *c, int destroyed)
 	Monitor *m;
 	XWindowChanges wc;
 
+	/* Make sure to clear any previous zoom references to the client being removed. */
+	int i;
+	for (m = mons; m; m = m->next) {
+		for (i = 0; i <= NUMTAGS; i++) {
+			if (m->pertag->prevzooms[i] == c) {
+				m->pertag->prevzooms[i] = NULL;
+			}
+		}
+	}
 	m = c->mon;
 
 	if (c->swallowing) {
@@ -2655,15 +2649,42 @@ zoom(const Arg *arg)
 		c = (Client*)arg->v;
 	if (!c)
 		return;
+	Client *at = NULL, *cold, *cprevious = NULL, *p;
 
 
 
 	if (!c->mon->lt[c->mon->sellt]->arrange || !c || c->isfloating)
 		return;
 
-	if (c == nexttiled(selmon->clients) && !(c = nexttiled(c->next)))
-		return;
-	pop(c);
+	if (c == nexttiled(c->mon->clients)) {
+		p = c->mon->pertag->prevzooms[c->mon->pertag->curtag];
+		at = findbefore(p);
+		if (at)
+			cprevious = nexttiled(at->next);
+		if (!cprevious || cprevious != p) {
+			c->mon->pertag->prevzooms[c->mon->pertag->curtag] = NULL;
+			if (!c || !(c = nexttiled(c->next)))
+				return;
+		} else
+			c = cprevious;
+	}
+
+	cold = nexttiled(c->mon->clients);
+	if (c != cold && !at)
+		at = findbefore(c);
+	detach(c);
+	attach(c);
+	/* swap windows instead of pushing the previous one down */
+	if (c != cold && at) {
+		c->mon->pertag->prevzooms[c->mon->pertag->curtag] = cold;
+		if (cold && at != cold) {
+			detach(cold);
+			cold->next = at->next;
+			at->next = cold;
+		}
+	}
+	focus(c);
+	arrange(c->mon);
 }
 
 int
