@@ -13,7 +13,6 @@
 /* Other patches */
 #include "attachx.h"
 #include "autostart.h"
-#include "focusfollowmouse.h"
 #include "pertag.h"
 #include "sizehints_ruled.h"
 #include "swallow.h"
