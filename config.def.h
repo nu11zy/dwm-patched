@@ -228,9 +228,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_h,          setmfact,               {.f = -0.05} },
 	{ MODKEY,                       XK_l,          setmfact,               {.f = +0.05} },
 	{ MODKEY,                       XK_w,          setlayout,              {.v = &layouts[0]} },
-	{ MODKEY|ShiftMask,             XK_s,          togglefloating,         {0} },
+	{ MODKEY,                       XK_i,          incnmaster,             {.i = +1 } },
+	{ MODKEY,                       XK_s,          togglefloating,         {0} },
 	{ MODKEY|ShiftMask,             XK_q,          killclient,             {0} },
-	{ MODKEY|ShiftMask,             XK_Esc,        quit,                   {0} },
+	{ MODKEY|ShiftMask,             XK_Escape,     quit,                   {0} },
 	TAGKEYS(                        XK_1,                                  0)
 	TAGKEYS(                        XK_2,                                  1)
 	TAGKEYS(                        XK_3,                                  2)
@@ -241,7 +242,6 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                                  7)
 	TAGKEYS(                        XK_9,                                  8)
 	// { MODKEY,                       XK_b,          togglebar,              {0} },
-	// { MODKEY,                       XK_i,          incnmaster,             {.i = +1 } },
 	// { MODKEY,                       XK_d,          incnmaster,             {.i = -1 } },
 	// { MODKEY,                       XK_Return,     zoom,                   {0} },
 	// { MODKEY,                       XK_Tab,        view,                   {0} },
