@@ -227,9 +227,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_k,          focusstack,             {.i = -1 } },
 	{ MODKEY,                       XK_h,          setmfact,               {.f = -0.05} },
 	{ MODKEY,                       XK_l,          setmfact,               {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} },
 	{ MODKEY,                       XK_w,          setlayout,              {.v = &layouts[0]} },
 	{ MODKEY|ShiftMask,             XK_s,          togglefloating,         {0} },
+	{ MODKEY|ShiftMask,             XK_q,          killclient,             {0} },
+	{ MODKEY|ShiftMask,             XK_Esc,        quit,                   {0} },
 	TAGKEYS(                        XK_1,                                  0)
 	TAGKEYS(                        XK_2,                                  1)
 	TAGKEYS(                        XK_3,                                  2)
@@ -245,7 +246,6 @@ static const Key keys[] = {
 	// { MODKEY,                       XK_Return,     zoom,                   {0} },
 	// { MODKEY,                       XK_Tab,        view,                   {0} },
 	// { MODKEY|ControlMask,           XK_z,          showhideclient,         {0} },
-	// { MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
 	// { MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
 	// { MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
 	// { MODKEY,                       XK_space,      setlayout,              {0} },
