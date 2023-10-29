@@ -8,6 +8,7 @@
 #include "bar_tags.c"
 #include "bar_wintitle.c"
 #include "bar_awesomebar.c"
+#include "bar_systray.c"
 #include "bar_wintitleactions.c"
 
 /* Other patches */
